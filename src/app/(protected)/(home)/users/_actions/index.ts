@@ -49,6 +49,14 @@ export async function findMany(params = defaultParams): Promise<{
       friends: { where: { id: session.user.id }, select: { id: true } },
       friendOf: { where: { id: session.user.id }, select: { id: true } },
       blockedBy: { where: { id: session.user.id }, select: { id: true } },
+      receivedRequests: {
+        where: { from: { id: session.user.id } },
+        select: { id: true },
+      },
+      sentRequests: {
+        where: { to: { id: session.user.id } },
+        select: { id: true },
+      },
     },
     orderBy,
     take,
@@ -58,10 +66,20 @@ export async function findMany(params = defaultParams): Promise<{
   const total = await db.user.count({ where });
 
   const data = result.map((item) => {
-    const { friendOf, friends, blockedBy, ...rest } = item;
+    const {
+      friendOf,
+      friends,
+      blockedBy,
+      receivedRequests,
+      sentRequests,
+      ...rest
+    } = item;
     const isFriend = friends.length > 0 || friendOf.length > 0;
     const isBlocked = blockedBy.length > 0;
-    return { ...rest, isFriend, isBlocked };
+    let requestStatus: "sent" | "received" | "none" = "none";
+    if (sentRequests.length > 0) requestStatus = "sent";
+    if (receivedRequests.length > 0) requestStatus = "received";
+    return { ...rest, isFriend, isBlocked, requestStatus };
   });
 
   return { data, total };
