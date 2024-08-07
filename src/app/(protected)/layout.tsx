@@ -1,7 +1,6 @@
 import { getServerSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import SessionProvider from "@/components/session-provider";
-import { Button } from "@/components/ui/button";
 import Header from "@/components/header";
 
 export default async function ProtectedLayout({
