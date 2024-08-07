@@ -13,7 +13,7 @@ function FriendButton({ id, isFriend }: { id: string; isFriend: boolean }) {
   }
   return (
     <form action={action}>
-      <Button type="submit" variant="outline">
+      <Button type="submit" variant="outline" size="sm">
         {isFriend ? "Unfriend" : "Add friend"}
       </Button>
     </form>
@@ -27,7 +27,7 @@ function BlockButton({ id, isBlocked }: { id: string; isBlocked: boolean }) {
   }
   return (
     <form action={action}>
-      <Button type="submit" variant="outline">
+      <Button type="submit" variant="outline" size="sm">
         {isBlocked ? "Unblock" : "Block"}
       </Button>
     </form>
