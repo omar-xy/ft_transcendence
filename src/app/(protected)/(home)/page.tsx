@@ -1,27 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { db } from "@/lib/db";
 
-const defaultUsers = [
-  {
-    name: "John Doe",
-    email: "johndoe@email.com",
-    password: "password",
-  },
-  {
-    name: "Jane Doe",
-    email: "janedoe@email.com",
-    password: "password",
-  },
-  {
-    name: "Alice Doe",
-    email: "alicedoe@email.com",
-    password: "password",
-  },
-];
 export default async function Page() {
-  await new Promise((resolve) => setTimeout(resolve, 1_000));
-  await db.user.deleteMany();
-  await db.user.createMany({ data: defaultUsers });
   const users = await db.user.findMany();
   return (
     <main className="space-y-container p-container">
