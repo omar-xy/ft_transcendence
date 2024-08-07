@@ -12,6 +12,19 @@ enum Role {
   ADMIN
 }
 
+enum GroupType {
+  DM
+  PRIVATE
+  PROTECTED
+  PUBLIC
+}
+
+enum GroupRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
 model User {
   id       String  @id @default(cuid())
   email    String  @unique
@@ -20,30 +33,59 @@ model User {
   image    String?
   role     Role    @default(USER)
 
-  friends    User[]      @relation("friends")
-  friendOf   User[]      @relation("friends")
-  blocked    User[]      @relation("blocked")
-  blockedBy  User[]      @relation("blocked")
-  groupUsers GroupUser[]
+  friends          User[]          @relation("friends")
+  friendOf         User[]          @relation("friends")
+  blocked          User[]          @relation("blocked")
+  blockedBy        User[]          @relation("blocked")
+  groupUsers       GroupUser[]
+  receivedRequests FriendRequest[] @relation("received_requests")
+  sentRequests     FriendRequest[] @relation("sent_requests")
+  messsage         Messsage[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 }
 
 model GroupUser {
-  user    User   @relation(fields: [userId], references: [id])
+  user    User      @relation(fields: [userId], references: [id])
   userId  String
-  group   Group  @relation(fields: [groupId], references: [id])
+  group   Group     @relation(fields: [groupId], references: [id])
   groupId String
+  role    GroupRole @default(MEMBER)
 
   @@id([userId, groupId])
 }
 
 model Group {
-  id        String      @id @default(cuid())
-  name      String
-  image     String?
-  roupUsers GroupUser[]
+  id         String      @id @default(cuid())
+  name       String?
+  image      String?
+  type       GroupType   @default(PUBLIC)
+  groupUsers GroupUser[]
+  messsages  Messsage[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model FriendRequest {
+  id     String @id @default(cuid())
+  to     User   @relation("received_requests", fields: [toId], references: [id])
+  toId   String @map("to_id")
+  from   User   @relation("sent_requests", fields: [fromId], references: [id])
+  fromId String @map("from_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model Messsage {
+  id      String @id @default(cuid())
+  content String
+  author  User   @relation(fields: [userId], references: [id])
+  userId  String @map("user_id")
+  group   Group  @relation(fields: [groupId], references: [id])
+  groupId String @map("group_id")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
